@@ -1,0 +1,552 @@
+<html>     
+    
+        <head>
+            {% load staticfiles %}
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+            <link rel="stylesheet" href="{% static "css/main.css" %}">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBasvi7Iwc3tbOVK2BkNCFOklJ5TfKhPu0&callback=loadGoogleMap"async defer></script>
+            <script language="javascript">
+                {% load staticfiles %}
+                var iconBase = '{% static "images/icon/" %}';
+                var icons = {
+                    center: {
+                    icon: iconBase + 'pos.png'
+                    },
+                    apparel: {
+                    icon: iconBase + '人_icon.png'
+                    },
+                    site: {
+                    icon: iconBase + '景點_icon.png'
+                    },
+                    activite: {
+                    icon: iconBase + '活動_icon.png'
+                    },
+                    shop: {
+                    icon: iconBase + '購物_icon.png'
+                    },
+                    hotel: {
+                    icon: iconBase + '飯店_icon.png'
+                    },
+                    restaurant: {
+                    icon: iconBase + '餐廳_icon.png'
+                    }
+                };
+                google.maps.event.addDomListener(window, 'load', loadGoogleMap);  //啟動GoogleMap
+                function loadGoogleMap() {  //顯示GoogleMap
+                    var center = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //設定中心點
+                    var markers = [];  //地標串列
+                    var i=0;
+                    var map = new google.maps.Map(document.getElementById('mapBoard'), {  //設定地圖
+                        zoom: 15,
+                        center: center,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+                    var latLng = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //景點坐標
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: "{{Site.Name}}",
+                            icon:icons['center'].icon,
+                            animation: google.maps.Animation.DROP,  //動畫方式
+                            map: map
+                        });			
+                    var message = "<div class='markdiv'><div class='marktitle'>" + "{{Site.Name}}" + "<br><div class='contactinfo'>Address："+ "{{Site.Address}}" +"<br>URL："+"{{Site.URL}}" + "</div><a href='#' onClick='show_streeview()'><img src='http://cbk0.google.com/cbk?output=thumbnail&w=250&h=50&ll="+ {{Site.Lat}} +","+ {{Site.Lng}} +"'></a></div>"
+                    attachMessage(i, message, latLng);
+                    var info_window = [];  //訊息視窗陣列
+                    function attachMessage(index, msg, latLng) {  //加入地標訊息視窗
+                        google.maps.event.addListener(markers[index], 'click', function(event) {
+                            close_other_makers(index);  //關閉其他地標訊息視窗
+                            info_window[index] = new google.maps.InfoWindow({  //建立地標訊息視窗
+                                content: msg,
+                                maxWidth: 280
+                            });
+                            info_window[index].open(markers[index].getMap(), markers[index]);  //顯示地標訊息視窗
+                            markers[index].getMap().panTo(latLng);  //將目前地標設為中心
+                            panorama = markers[index].getMap().getStreetView();  //設定街景
+                            panorama.setPosition(latLng);  //街景位置
+                            panorama.setPov({  //建立街景
+                                heading: 0,
+                                zoom: 1,
+                                pitch: 0
+                            });
+                        });
+                    }
+                    
+                    function close_other_makers(index){  //關閉其他地標訊息視窗
+                        var makers_count = markers.length;  //地標數量
+                        for (var i=0;i<makers_count;i++){
+                            if (i == index ) continue;  //如果是目前地標就跳過
+                            if (info_window[i]) info_window[i].close();  //關閉地標訊息視窗
+                            info_window[i] = null;  //清除地標訊息視窗
+                        }
+                    }
+                }
+    /////////////////////////////////////////////////
+                function Restaurant() {  //顯示GoogleMap
+                    var center = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //設定中心點
+                    var markers = [];  //地標串列
+                    var i=0;
+                    var map = new google.maps.Map(document.getElementById('mapBoard'), {  //設定地圖
+                        zoom: 15,
+                        center: center,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+                    var latLng = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //景點坐標
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: "{{Site.Name}}",
+                            icon:icons['center'].icon,
+                            animation: google.maps.Animation.DROP,  //動畫方式
+                            map: map
+                        });		
+                    {% for item in Restaurant %}  //逐筆建立地標
+                        var latLng = new google.maps.LatLng({{item.Lat}}, {{item.Lng}});  //景點坐標
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: "{{item.Name}}",
+                            icon:icons['restaurant'].icon,
+                            animation: google.maps.Animation.DROP,  //動畫方式
+                            map: map
+                        });
+                        markers.push(marker);  //將地標加入串列
+                        //建立地標訊息視窗
+                        var message = "<div class='markdiv'><div class='marktitle'>" + "{{item.Name}}"  + "</div><a href='#' onClick='show_streeview()'><img src='http://cbk0.google.com/cbk?output=thumbnail&w=250&h=50&ll="+ {{item.Lat}} +","+ {{item.Lng}} +"'></a></div>"
+                        attachMessage(i, message, latLng);
+                        i++;
+                    {% endfor %}
+        
+                    var info_window = [];  //訊息視窗陣列
+                    function attachMessage(index, msg, latLng) {  //加入地標訊息視窗
+                        google.maps.event.addListener(markers[index], 'click', function(event) {
+                            close_other_makers(index);  //關閉其他地標訊息視窗
+                            info_window[index] = new google.maps.InfoWindow({  //建立地標訊息視窗
+                                content: msg,
+                                maxWidth: 280
+                            });
+                            info_window[index].open(markers[index].getMap(), markers[index]);  //顯示地標訊息視窗
+                            markers[index].getMap().panTo(latLng);  //將目前地標設為中心
+                            panorama = markers[index].getMap().getStreetView();  //設定街景
+                            panorama.setPosition(latLng);  //街景位置
+                            panorama.setPov({  //建立街景
+                                heading: 0,
+                                zoom: 1,
+                                pitch: 0
+                            });
+                        });
+                    }             
+                    function close_other_makers(index){  //關閉其他地標訊息視窗
+                        var makers_count = markers.length;  //地標數量
+                        for (var i=0;i<makers_count;i++){
+                            if (i == index ) continue;  //如果是目前地標就跳過
+                            if (info_window[i]) info_window[i].close();  //關閉地標訊息視窗
+                            info_window[i] = null;  //清除地標訊息視窗
+                        }
+                    }
+                }
+    /////////////////////////////////////////////////
+    function Shop() {  //顯示GoogleMap
+                    var center = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //設定中心點
+                    var markers = [];  //地標串列
+                    var i=0;
+                    var map = new google.maps.Map(document.getElementById('mapBoard'), {  //設定地圖
+                        zoom: 15,
+                        center: center,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+                    var latLng = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //景點坐標
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: "{{Site.Name}}",
+                            icon:icons['center'].icon,
+                            animation: google.maps.Animation.DROP,  //動畫方式
+                            map: map
+                        });	
+                    var latLng = new google.maps.LatLng({{Shop.Lat}}, {{Shop.Lng}});  //景點坐標
+                    var marker = new google.maps.Marker({
+                        position: latLng,
+                        title: "{{Shop.Name}}",
+                        icon:icons['shop'].icon,
+                        animation: google.maps.Animation.DROP,  //動畫方式
+                        map: map
+                    });
+                    markers.push(marker);  //將地標加入串列
+                    //建立地標訊息視窗
+                    var message = "<div class='markdiv'><div class='marktitle'>" + "{{Shop.Name}}"  + "</div><a href='#' onClick='show_streeview()'><img src='http://cbk0.google.com/cbk?output=thumbnail&w=250&h=50&ll="+ {{Shop.Lat}} +","+ {{Shop.Lng}} +"'></a></div>"
+                    attachMessage(i, message, latLng);
+                    i++;
+    
+        
+                    var info_window = [];  //訊息視窗陣列
+                    function attachMessage(index, msg, latLng) {  //加入地標訊息視窗
+                        google.maps.event.addListener(markers[index], 'click', function(event) {
+                            close_other_makers(index);  //關閉其他地標訊息視窗
+                            info_window[index] = new google.maps.InfoWindow({  //建立地標訊息視窗
+                                content: msg,
+                                maxWidth: 280
+                            });
+                            info_window[index].open(markers[index].getMap(), markers[index]);  //顯示地標訊息視窗
+                            markers[index].getMap().panTo(latLng);  //將目前地標設為中心
+                            panorama = markers[index].getMap().getStreetView();  //設定街景
+                            panorama.setPosition(latLng);  //街景位置
+                            panorama.setPov({  //建立街景
+                                heading: 0,
+                                zoom: 1,
+                                pitch: 0
+                            });
+                        });
+                    }             
+                    function close_other_makers(index){  //關閉其他地標訊息視窗
+                        var makers_count = markers.length;  //地標數量
+                        for (var i=0;i<makers_count;i++){
+                            if (i == index ) continue;  //如果是目前地標就跳過
+                            if (info_window[i]) info_window[i].close();  //關閉地標訊息視窗
+                            info_window[i] = null;  //清除地標訊息視窗
+                        }
+                    }
+                }   
+    /////////////////////////////////////////////////
+            function Apparel() {  //顯示GoogleMap
+                    var center = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //設定中心點
+                    var markers = [];  //地標串列
+                    var i=0;
+                    var map = new google.maps.Map(document.getElementById('mapBoard'), {  //設定地圖
+                        zoom: 15,
+                        center: center,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+                    var latLng = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //景點坐標
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: "{{Site.Name}}",
+                            icon:icons['center'].icon,
+                            animation: google.maps.Animation.DROP,  //動畫方式
+                            map: map
+                        });	
+                    var latLng = new google.maps.LatLng({{Apparel.Lat}}, {{Apparel.Lng}});  //景點坐標
+                    var marker = new google.maps.Marker({
+                        position: latLng,
+                        title: "{{Apparel.Name}}",
+                        icon:icons['apparel'].icon,
+                        animation: google.maps.Animation.DROP,  //動畫方式
+                        map: map
+                    });
+                    markers.push(marker);  //將地標加入串列
+                    //建立地標訊息視窗
+                    var message = "<div class='markdiv'><div class='marktitle'>" + "{{Apparel.Name}}"  + "</div><a href='#' onClick='show_streeview()'><img src='http://cbk0.google.com/cbk?output=thumbnail&w=250&h=50&ll="+ {{Apparel.Lat}} +","+ {{Apparel.Lng}} +"'></a></div>"
+                    attachMessage(i, message, latLng);
+                    i++;
+    
+        
+                    var info_window = [];  //訊息視窗陣列
+                    function attachMessage(index, msg, latLng) {  //加入地標訊息視窗
+                        google.maps.event.addListener(markers[index], 'click', function(event) {
+                            close_other_makers(index);  //關閉其他地標訊息視窗
+                            info_window[index] = new google.maps.InfoWindow({  //建立地標訊息視窗
+                                content: msg,
+                                maxWidth: 280
+                            });
+                            info_window[index].open(markers[index].getMap(), markers[index]);  //顯示地標訊息視窗
+                            markers[index].getMap().panTo(latLng);  //將目前地標設為中心
+                            panorama = markers[index].getMap().getStreetView();  //設定街景
+                            panorama.setPosition(latLng);  //街景位置
+                            panorama.setPov({  //建立街景
+                                heading: 0,
+                                zoom: 1,
+                                pitch: 0
+                            });
+                        });
+                    }             
+                    function close_other_makers(index){  //關閉其他地標訊息視窗
+                        var makers_count = markers.length;  //地標數量
+                        for (var i=0;i<makers_count;i++){
+                            if (i == index ) continue;  //如果是目前地標就跳過
+                            if (info_window[i]) info_window[i].close();  //關閉地標訊息視窗
+                            info_window[i] = null;  //清除地標訊息視窗
+                        }
+                    }
+                }
+    /////////////////////////////////////////////////
+            function OtherSite() {  //顯示GoogleMap
+                    var center = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //設定中心點
+                    var markers = [];  //地標串列
+                    var i=0;
+                    var map = new google.maps.Map(document.getElementById('mapBoard'), {  //設定地圖
+                        zoom: 15,
+                        center: center,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+                    var latLng = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //景點坐標
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: "{{Site.Name}}",
+                            icon:icons['center'].icon,
+                            animation: google.maps.Animation.DROP,  //動畫方式
+                            map: map
+                        });		
+                    {% for item in OtherSite %}  //逐筆建立地標
+                        var latLng = new google.maps.LatLng({{item.Lat}}, {{item.Lng}});  //景點坐標
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: "{{item.Name}}",
+                            icon:icons['site'].icon,
+                            animation: google.maps.Animation.DROP,  //動畫方式
+                            map: map
+                        });
+                        markers.push(marker);  //將地標加入串列
+                        //建立地標訊息視窗
+                        var message = "<div class='markdiv'><div class='marktitle'>" + "{{item.Name}}"  + "</div><a href='#' onClick='show_streeview()'><img src='http://cbk0.google.com/cbk?output=thumbnail&w=250&h=50&ll="+ {{item.Lat}} +","+ {{item.Lng}} +"'></a></div>"
+                        attachMessage(i, message, latLng);
+                        i++;
+                    {% endfor %}
+        
+                    var info_window = [];  //訊息視窗陣列
+                    function attachMessage(index, msg, latLng) {  //加入地標訊息視窗
+                        google.maps.event.addListener(markers[index], 'click', function(event) {
+                            close_other_makers(index);  //關閉其他地標訊息視窗
+                            info_window[index] = new google.maps.InfoWindow({  //建立地標訊息視窗
+                                content: msg,
+                                maxWidth: 280
+                            });
+                            info_window[index].open(markers[index].getMap(), markers[index]);  //顯示地標訊息視窗
+                            markers[index].getMap().panTo(latLng);  //將目前地標設為中心
+                            panorama = markers[index].getMap().getStreetView();  //設定街景
+                            panorama.setPosition(latLng);  //街景位置
+                            panorama.setPov({  //建立街景
+                                heading: 0,
+                                zoom: 1,
+                                pitch: 0
+                            });
+                        });
+                    }             
+                    function close_other_makers(index){  //關閉其他地標訊息視窗
+                        var makers_count = markers.length;  //地標數量
+                        for (var i=0;i<makers_count;i++){
+                            if (i == index ) continue;  //如果是目前地標就跳過
+                            if (info_window[i]) info_window[i].close();  //關閉地標訊息視窗
+                            info_window[i] = null;  //清除地標訊息視窗
+                        }
+                    }
+                }
+   //////////////////////////////////////////////////
+                function Activity() {  //顯示GoogleMap
+                    var center = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //設定中心點
+                    var markers = [];  //地標串列
+                    var i=0;
+                    var map = new google.maps.Map(document.getElementById('mapBoard'), {  //設定地圖
+                        zoom: 15,
+                        center: center,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+                    var latLng = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //景點坐標
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: "{{Site.Name}}",
+                            icon:icons['center'].icon,
+                            animation: google.maps.Animation.DROP,  //動畫方式
+                            map: map
+                        });		
+                    {% for item in Activity %}  //逐筆建立地標
+                        var latLng = new google.maps.LatLng({{item.Lat}}, {{item.Lng}});  //景點坐標
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: "{{item.Name}}",
+                            icon:icons['activite'].icon,
+                            animation: google.maps.Animation.DROP,  //動畫方式
+                            map: map
+                        });
+                        markers.push(marker);  //將地標加入串列
+                        //建立地標訊息視窗
+                        var message = "<div class='markdiv'><div class='marktitle'>" + "{{item.Name}}"  + "</div><a href='#' onClick='show_streeview()'><img src='http://cbk0.google.com/cbk?output=thumbnail&w=250&h=50&ll="+ {{item.Lat}} +","+ {{item.Lng}} +"'></a></div>"
+                        attachMessage(i, message, latLng);
+                        i++;
+                    {% endfor %}
+        
+                    var info_window = [];  //訊息視窗陣列
+                    function attachMessage(index, msg, latLng) {  //加入地標訊息視窗
+                        google.maps.event.addListener(markers[index], 'click', function(event) {
+                            close_other_makers(index);  //關閉其他地標訊息視窗
+                            info_window[index] = new google.maps.InfoWindow({  //建立地標訊息視窗
+                                content: msg,
+                                maxWidth: 280
+                            });
+                            info_window[index].open(markers[index].getMap(), markers[index]);  //顯示地標訊息視窗
+                            markers[index].getMap().panTo(latLng);  //將目前地標設為中心
+                            panorama = markers[index].getMap().getStreetView();  //設定街景
+                            panorama.setPosition(latLng);  //街景位置
+                            panorama.setPov({  //建立街景
+                                heading: 0,
+                                zoom: 1,
+                                pitch: 0
+                            });
+                        });
+                    }             
+                    function close_other_makers(index){  //關閉其他地標訊息視窗
+                        var makers_count = markers.length;  //地標數量
+                        for (var i=0;i<makers_count;i++){
+                            if (i == index ) continue;  //如果是目前地標就跳過
+                            if (info_window[i]) info_window[i].close();  //關閉地標訊息視窗
+                            info_window[i] = null;  //清除地標訊息視窗
+                        }
+                    }
+                }
+   //////////////////////////////////////////////////             
+                function HotelTime() {  //顯示GoogleMap
+                    var center = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //設定中心點
+                    var markers = [];  //地標串列
+                    var i=0;
+                    var map = new google.maps.Map(document.getElementById('mapBoard'), {  //設定地圖
+                        zoom: 15,
+                        center: center,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+                    var latLng = new google.maps.LatLng({{Site.Lat}}, {{Site.Lng}});  //景點坐標
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: "{{Site.Name}}",
+                            icon:icons['center'].icon,
+                            animation: google.maps.Animation.DROP,  //動畫方式
+                            map: map
+                        });		
+                    {% for item in HotelTime %}  //逐筆建立地標
+                        var latLng = new google.maps.LatLng({{item.Lat}}, {{item.Lng}});  //景點坐標
+                        var marker = new google.maps.Marker({
+                            position: latLng,
+                            title: "{{item.ChiName}}",
+                            icon:icons['hotel'].icon,
+                            animation: google.maps.Animation.DROP,  //動畫方式
+                            map: map
+                        });
+                        markers.push(marker);  //將地標加入串列
+                        //建立地標訊息視窗
+                        var message = "<div class='markdiv'><div class='marktitle'>" + "{{item.ChiName}}"  + "</div><a href='#' onClick='show_streeview()'><img src='http://cbk0.google.com/cbk?output=thumbnail&w=250&h=50&ll="+ {{item.Lat}} +","+ {{item.Lng}} +"'></a></div>"
+                        attachMessage(i, message, latLng);
+                        i++;
+                    {% endfor %}
+        
+                    var info_window = [];  //訊息視窗陣列
+                    function attachMessage(index, msg, latLng) {  //加入地標訊息視窗
+                        google.maps.event.addListener(markers[index], 'click', function(event) {
+                            close_other_makers(index);  //關閉其他地標訊息視窗
+                            info_window[index] = new google.maps.InfoWindow({  //建立地標訊息視窗
+                                content: msg,
+                                maxWidth: 280
+                            });
+                            info_window[index].open(markers[index].getMap(), markers[index]);  //顯示地標訊息視窗
+                            markers[index].getMap().panTo(latLng);  //將目前地標設為中心
+                            panorama = markers[index].getMap().getStreetView();  //設定街景
+                            panorama.setPosition(latLng);  //街景位置
+                            panorama.setPov({  //建立街景
+                                heading: 0,
+                                zoom: 1,
+                                pitch: 0
+                            });
+                        });
+                    }             
+                    function close_other_makers(index){  //關閉其他地標訊息視窗
+                        var makers_count = markers.length;  //地標數量
+                        for (var i=0;i<makers_count;i++){
+                            if (i == index ) continue;  //如果是目前地標就跳過
+                            if (info_window[i]) info_window[i].close();  //關閉地標訊息視窗
+                            info_window[i] = null;  //清除地標訊息視窗
+                        }
+                    }
+                }
+         ///////////////////////////////////////////////////       
+                function show_streeview() {  //顯示街景
+                    panorama.setVisible(true);
+                }
+            </script>
+            <style>
+            
+            
+            </style>    
+           
+        </head>
+   
+   
+        <body>
+           <div class="container-fluid" style="position:absolute;left:95px;top:60px;">
+               <div class="row">
+               <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+                 <ul class="nav nav-pills flex-column">
+                   <li class="nav-item">
+                      <a class="nav-link " href="#"><div style="width:168px;font-size:30px;"><b>美食</b></div> </a>
+                   </li>
+                   <li class="nav-item">
+                     <a class="nav-link" href="#"><div style="width:168px;font-size:30px;"><b>住宿</b></div></a>
+                   </li>
+                   <li class="nav-item">
+                     <a class="nav-link" href="#"><div style="width:168px;font-size:30px;"><b>景點</b></div></a>
+                   </li>
+                   <li class="nav-item">
+                     <a class="nav-link" href="#"><div style="width:168px;font-size:30px;"><b>購物</b></div></a>
+                   </li>
+                  </ul>
+               </nav>
+               </div>
+           </div>
+           
+           <div style="position:absolute;left:445px;top:10px;border:2px solid black;width:300px;height:400px">
+               <div style="width:296px;height:300px;">圖片顯示</div>
+                   <div style="border:0.5px solid black;width:296px;height:40px;font-size:30px;background-image: url('.//%E8%BE%A8%E8%AD%98%E7%B5%90%E6%9E%9C.jpg');">辨識結果</div>
+                   <div>金閣寺</div>
+               </div>
+               <div  style="position:absolute;left:755px;top:10px;border:2px solid black;width:300px;height:400px">介紹說明</div>
+        <div style="position:absolute;left:1065px;top:10px;border:2px solid black;width:500px;height:400px">
+            <div id="mapBoard"></div>
+            <div id="buttons">
+               <button id="res" class="itemList" onclick="Restaurant()">找餐廳 </button>
+               <button id="site" class="itemList" onclick="OtherSite()">找景點 </button>
+               <button id="shopping" class="itemList" onclick="Shop()">購物去 </button>
+               <button id="hotel" class="itemList" onclick="HotelTime()">找飯店 </button>
+               <button id="activity" class="itemList" onclick="Activity()">活動 </button>
+               <button id="wearing" class="itemList" onclick="Apparel()">衣著 </button>
+            </div>       
+           <!-- <script src="http://maps.google.com/maps/api/js"></script>
+           <script src="data.js" ></script>
+           <script src="new.js" ></script> -->
+               
+           </div>
+                         
+           <div class="container" >
+               <div style="width:1015px;height:500px;background-color:#F5F5F5;position:absolute;left:435px;top:460px;">
+                   <div  style="display:block;background-color:white;width:338px;height:500px;border:10px solid white;float:left">
+                       <a href="https://app.powerbi.com/view?r=eyJrIjoiNWE1NGJhZDEtMDRmYy00ZjM5LWE5MDYtOTM0YzllZDM3MTExIiwidCI6ImJlODgwODkwLTNlMDUtNGRiMy05ZjdjLTc1MDgxY2UzNDViYyIsImMiOjh9" class="thumbnail" style="text-align:center">
+                           <img src="http://i.imgur.com/pimWSd7.png" alt="...">一夜好眠        
+                       </a>
+                       <a href="https://app.powerbi.com/view?r=eyJrIjoiNWE1NGJhZDEtMDRmYy00ZjM5LWE5MDYtOTM0YzllZDM3MTExIiwidCI6ImJlODgwODkwLTNlMDUtNGRiMy05ZjdjLTc1MDgxY2UzNDViYyIsImMiOjh9" class="thumbnail" style="text-align:center">
+                           <img src="http://i.imgur.com/UO4D7VS.jpg" alt="...">文化巡禮       
+                       </a>    
+                   </div>
+                   <div  style="display:block;background-color:white;width:338px;height:500px;border:10px solid white;float:left">
+   
+                       <a href="https://app.powerbi.com/view?r=eyJrIjoiNWE1NGJhZDEtMDRmYy00ZjM5LWE5MDYtOTM0YzllZDM3MTExIiwidCI6ImJlODgwODkwLTNlMDUtNGRiMy05ZjdjLTc1MDgxY2UzNDViYyIsImMiOjh9" class="thumbnail" style="text-align:center">
+                         <img src="http://i.imgur.com/h5HRvqx.png" alt="...">美食饗宴        
+                       </a>    
+                       <a href="https://app.powerbi.com/view?r=eyJrIjoiNWE1NGJhZDEtMDRmYy00ZjM5LWE5MDYtOTM0YzllZDM3MTExIiwidCI6ImJlODgwODkwLTNlMDUtNGRiMy05ZjdjLTc1MDgxY2UzNDViYyIsImMiOjh9" class="thumbnail" style="text-align:center">
+                         <img src="http://i.imgur.com/xqeQX7J.jpg" alt="...">購物趣        
+                       </a>
+                   </div>
+                   
+                   <div  style="display:block;background-color:white;width:338px;height:500px;border:10px solid white;float:left">
+                       <a href="https://app.powerbi.com/view?r=eyJrIjoiNWE1NGJhZDEtMDRmYy00ZjM5LWE5MDYtOTM0YzllZDM3MTExIiwidCI6ImJlODgwODkwLTNlMDUtNGRiMy05ZjdjLTc1MDgxY2UzNDViYyIsImMiOjh9" class="thumbnail" style="text-align:center">
+                         <img src="http://i.imgur.com/yX48t60.png" alt="...">歡樂天地        
+                       </a> 
+                       <a href="https://app.powerbi.com/view?r=eyJrIjoiNWE1NGJhZDEtMDRmYy00ZjM5LWE5MDYtOTM0YzllZDM3MTExIiwidCI6ImJlODgwODkwLTNlMDUtNGRiMy05ZjdjLTc1MDgxY2UzNDViYyIsImMiOjh9" class="thumbnail" style="text-align:center">
+                         <img src="http://i.imgur.com/ExTMcNR.png" alt="...">交通資訊       
+                       </a>      
+                   </div>
+               </div>
+            </div>
+             
+       
+       
+       </body>
+   
+   
+   
+   </html>
+   <div style="position:absolute;left:610px;top:810px;">
+           <input type="button" value="回上一頁" onclick="history.back()"/>
+       </div>

@@ -1,0 +1,130 @@
+@charset "utf-8";
+/* CSS Document */
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td { margin:0; padding:0; }
+body { color:#000; font-size:12px; font-family: Microsoft Yahei, Arial, Helvetica, sans-serif; }
+td,th,caption { font-size:12px; }
+h1, h2, h3, h4, h5, h6 { font-weight:normal; font-size:100%; }
+address, caption, cite, code, dfn, em, strong, th, var,i { font-style:normal; font-weight:normal;}
+a { color:#000; text-decoration:none; }
+a:hover { text-decoration:none; }
+img { border:none; }
+ol,ul,li { list-style:none; }
+input, textarea, select, button { font:14px Microsoft Yahei,Helvetica,Arial,sans-serif;outline:none; margin:0px; padding:0px; }
+table { border-collapse:collapse; }
+
+.fl{ float:left;}
+.fr{ float:right;}
+.clear{ clear:both;}
+.con{ width:1000px; margin:0 auto;}
+.container{ background:url(../center.jpg) no-repeat center top; height:969px;background-size: cover;}
+.header{ height:80px; background:rgba(000,000,000,0.5);}
+.header .fr img{margin-top:25px; margin-left:10px;  float:right;}
+.login{ float:left; position:relative; width:415px; }
+.login_c{ float:left; position:absolute; right:0px;}
+.login_c input[type="text"]{ width:170px; height:30px; background:#fff; border:2px solid #eee; padding:0 10px; margin-top:25px; margin-left:10px; float:left;}
+.login_n li{ cursor:pointer;}
+.header .fr input[type="button"]{ border:0;  width:92px; height:35px; background:url(../images/dr.png) no-repeat; float:left;margin-top:25px; margin-left:10px; cursor:pointer;}
+
+
+.main{ width:547px;margin:60px auto 0; overflow:hidden; text-align:center; position:relative;}
+.sc{width:216px; height:40px; background:url(../images/sc.png); margin:30px auto 0;}
+.sc input{width:216px; height:40px; opacity: 0;filter: alpha(opacity=0); cursor:pointer;}
+.main p{ font-size:18px; color:#fdd000; margin-top:20px;}
+.link{ position:absolute; right:60px; bottom:8px; font-size:20px;}
+
+.logo{ float: left; margin-top:20px;}
+.main2{ width:995px; margin:5px auto 0;}
+.main2_2 .fl{ width:400px; height:375px; background:url(../images/qj1.jpg);background-repeat:no-repeat;background-size: cover; }
+.main2_2 .fl img{ float:left;}
+.m2_p{ padding:10px 15px; height:350px; color:#fff; font-size:14px; width:445px; background:rgba(000,000,000,0.5); line-height:33px; margin-bottom:20px;}
+.m2_b{ width:100%; height:140px; margin:25px auto 30px; float:left;}
+.m2_b li{ float:left; margin-right:10px;}
+.m2_p2{ width:500px; float:left;}
+.m2_con{ float:left; margin-left:25px;}
+.main2_2{ width:1500px; margin:0 auto;}
+
+.main3{ width:1400px; margin:90px auto 0;}
+.main3 .fl{ width:800px; height:600px; background:url(../images/sc.png),alt="";}/* #<img src="../images/washDrawing/007.JPG" height="300" > */
+.main3 .fr{ width:305px;}
+.m3_t{ margin:10px 0; overflow:hidden;}
+.m3_t button{ width:58px; height:58px; border:0; border-radius:50%; background-repeat:no-repeat; background-size:80px 60px; float:left; margin-left:3px;}
+
+.m3_c{ height:600px; padding:20px 10px 0; width:285px; background:rgba(000,000,000,0.7);}
+.m3_c li{ margin-bottom:10px;}
+.m3_c li h2{ height:24px; line-height:24px; color:#fff; font-size:24px;}
+.m3_c li h2 img{ float:left; margin-right:10px;}
+.m3_c li p{ color:#fff; padding-left:23px; margin-top:5px; line-height:25px; font-size:14px;}
+
+#mapBoard{	
+	
+	width:100%;
+	height:100%;
+	background:#ccc; 
+}			
+#buttons{
+	width:700px;
+	text-align:center;
+}
+.itemList{	
+	cursor:pointer;
+}
+
+.data2 .pic2{
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:-1;
+}
+.data2 .image_container a{
+	width:100%;height:100%; display:block;
+    float:left;
+    -webkit-perspective: 600px;
+    -moz-perspective: 600px;
+}
+
+.data2 .image_container a .pic1{
+    -webkit-transform: rotateX(0deg) rotateY(0deg);
+    -webkit-transform-style: preserve-3d;
+    -webkit-backface-visibility: hidden;
+    -moz-transform: rotateX(0deg) rotateY(0deg);
+    -moz-transform-style: preserve-3d;
+    -moz-backface-visibility: hidden;
+    -o-transition: all .4s ease-in-out;
+    -ms-transition: all .4s ease-in-out;
+    -moz-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;
+}
+
+.data2 .image_container a:hover .pic1{
+    -webkit-transform:rotateY(180deg);
+    -moz-transform:rotateY(180deg);
+}
+
+.data2 .image_container a .pic2{
+    -webkit-transform: rotateY(-180deg);
+    -webkit-transform-style: preserve-3d;
+    -webkit-backface-visibility: hidden;
+    -moz-transform: rotateY(-180deg);
+    -moz-transform-style: preserve-3d;
+    -moz-backface-visibility: hidden;
+    -o-transition: all .4s ease-in-out;
+    -ms-transition: all .4s ease-in-out;
+    -moz-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out;
+    transition: all .4s ease-in-out;/*z-index:10;
+    position:absolute;*/
+}
+
+.data2 .image_container a:hover .pic2{
+    -webkit-transform:rotateX(0deg) rotateY(0deg);
+    -moz-transform:rotateX(0deg) rotate(0deg);
+    z-index: 10;
+    position: absolute;
+}
+
+.data2 .row{width:118px;height:118px;z-index:10;}
+.data2 .row img{width:118px;height:118px; }
+.data2 .row .pic1{width:100%;height:100%; overflow:hidden;}
+.data2 .row .pic2{width:100%;height:100%; overflow:hidden;}
+.data2 .row .pic2 img{position:absolute;}

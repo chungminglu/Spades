@@ -1,0 +1,219 @@
+<html>
+    <head>
+        {% load staticfiles %}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script>
+            var dropBox;
+            window.onload = function() {
+              dropBox = document.getElementById("dropBox");
+              dropBox.ondragenter = ignoreDrag;
+              dropBox.ondragover = ignoreDrag;
+              dropBox.ondrop = drop;
+            }
+            function ignoreDrag(e) {
+              //因为我们在处理拖放，所以应该确保没有其他元素会取得这个事件
+              e.stopPropagation();
+              e.preventDefault();
+
+            }
+            function drop(e) {
+              //取消事件传播及默认行为
+              e.stopPropagation();
+              e.preventDefault();
+
+              //取得拖进来的文件
+              var data = e.dataTransfer;
+              var files = data.files;
+              //将其传给真正的处理文件的函数
+              processFiles(files);
+            }
+            function processFiles(files) {
+              var file = files[0];
+              var output = document.getElementById("fileOutput");
+              //创建FileReader
+              var reader = new FileReader();
+              //告诉它在准备好数据之后做什么
+              reader.onload = function (e) {
+                //使用图像URL来绘制dropBox的背景
+                dropBox.style.backgroundImage = "url('" + e.target.result + "')";
+              };
+              //读取图片
+              reader.readAsDataURL(file);
+            }
+
+            function showFileInput() {
+              var fileInput = document.getElementById("fileInput");
+              fileInput.click();
+            }
+        </script>
+        
+        <style>
+            #dropBox {
+              width: 700px;
+              height: 700px;
+              background-size: cover;
+              background-repeat: no-repeat;
+              
+            }
+            #dropBox div {
+              color: light-black;
+              font-size: 25px;
+              font-family: Verdana, Arial, sans-serif;
+            }
+            input {
+              margin: 1px;
+            }
+            
+            
+            .btn1,.btn1::before{
+            width:200px;
+            height:30px;
+            line-height:30px;
+            text-align:center;
+            border-radius:3px;
+            }
+            .btn{
+            position:relative;
+            background:#5ad;
+            color:#fff;
+            cursor:pointer;
+            }
+            .btn::before{
+            content:"loading";
+            position:absolute;
+            display:none;
+            z-index:2;
+            top:0;
+            left:0;
+            color:#fff;
+            text-shadow:rgba(100,0,0,1) 0 0 3px;
+            background:-webkit-linear-gradient(45deg,#fc0 0%,#fc0 20%,#fa0 20%, #fa0 45%,#fc0 45%,#fc0 70%,#fa0 70%, #fa0 95%,#fc0 95%,#fc0 100%);
+            background-size:30px 30px;
+            background-position:0 0;
+            -webkit-animation:click 1s infinite linear;
+            }
+            .btn.click::before{
+            display:block;
+            }
+            @-webkit-keyframes "click"{
+            0%{
+            background-position:0 0;
+            }
+            100%{
+            background-position:30px 0;
+            }
+            }
+            
+            
+        </style>
+        
+        <meta http-equiv="content-type" content="text/html;charset=utf-8">
+        <script type="text/javascript">
+            <!--//--><![CDATA[// ><!--
+             function delayURL(url,time){
+             setTimeout("top.location.href = '" + url + "'",time);
+             }
+            //--><!]]>
+        </script>
+        <script>
+            cache=""
+            function change(){
+                
+                cache+="<img src='{% static 'images/test.gif' %}'>";
+                document.getElementById("photo").innerHTML=cache;
+            }
+        </script>
+          
+        
+    </head>
+    {% load staticfiles %}
+    <body background="{% static "images/center.jpg" %}" style="background-repeat:no-repeat;background-size: cover;">
+                
+        <div style="position:absolute;left:25%;"><img src="./2.png"></div>
+        <div class="container" >
+            <div id="dropBox" style="position:absolute; left: 32%;top:13%; ">
+                <h4 style="position:absolute;top:50%;left:38%;">請放入要查詢的圖片</h4>
+            </div>
+        
+        <div style="position:absolute;left:40%;top:86%;">
+            <input id="fileInput" type="file" onchange="processFiles(this.files)"  >
+            <img id="thumbnail"> 
+        </div>
+            
+        <div style="position:absolute;top:44%;left:46%;" id="photo"></div>         
+        <input id="photo" style="position:absolute;left:54.8%;top:85%" src="confirm.png" type="image"  onclick="if(confirm('您確定送出這張圖片嗎?')) return delayURL('/second',5000) & change() & location();else return false;"/>
+        
+        <div class="container-fluid" style="position:absolute;left:100px;top:60px;" style="weight:170px;" >
+        <div class="row" style="weight:170px;height:600px">
+            <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+                <ul class="nav nav-pills flex-column">
+                    <li class="nav-item">
+                       <a class="nav-link " href="#"><div style="width:168px;font-size:30px;"><b>首頁</b></div> </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#"><div style="width:168px;font-size:30px;"><b>機票資訊</b></div></a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#"><div style="width:168px;font-size:30px;"><b>飯店資訊</b></div></a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#"><div style="width:168px;font-size:30px;"><b>專題花絮</b></div></a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#"><div style="width:168px;font-size:30px;"><b>旅遊札記</b></div></a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#"><div style="width:168px;font-size:30px;"><b>關於我們</b></div></a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#"><div style="width:168px;font-size:30px;"><b>問與答</b></div></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        </div>
+            
+            
+        </div>
+        <div class="container" style="position:absolute;left:85%;top:0%;width:250px;">
+            <form class="form-signin">
+                <h2 class="form-signin-heading">會員登入</h2>
+                <label for="inputEmail" class="sr-only" style="position:absolute;top:110px;" >Email address</label>
+                <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus style="position:absolute;">
+                <label for="inputPassword" class="sr-only" style="position:absolute;top:110px;">Password</label>
+                <input type="password" id="inputPassword" class="form-control" placeholder="Password" required style="position:absolute;top:100px;">
+                <div class="checkbox">
+                    <label style="position:absolute;top:80px;">
+                    <input type="checkbox" value="remember-me" > 記住我
+                    </label>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" style="position:absolute;top:170px;">登入</button>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" style="position:absolute;top:220px;">忘記密碼</button>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" style="position:absolute;top:270px;">加入會員</button>
+            </form>
+
+        </div> 
+        
+<!-- /container -->
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script>window.jQuery || document.write('<script src="../../../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+<script src="../../../../assets/js/vendor/popper.min.js"></script>
+<script src="../../../../dist/js/bootstrap.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="../../../../assets/js/ie10-viewport-bug-workaround.js"></script>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="../../../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    
+    </body>
+</html>

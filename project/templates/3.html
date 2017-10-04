@@ -1,0 +1,44 @@
+<html>
+    <head>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <div id="drop_zone">Drop files here</div>
+    <ul id="list"></ul>
+    
+
+    // 必须阻止dragenter和dragover事件的默认行为，这样才能触发 drop 事件
+    function fileSelect(evt) {
+
+      evt.stopPropagation();
+      evt.preventDefault();
+
+      var files = evt.dataTransfer.files; // 文件对象
+      var output = [];
+
+      // 处理多文件
+      for (var i = 0, f; f = files[i]; i++) {
+        output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                    f.size, ' bytes, last modified: ',
+                    f.lastModifiedDate.toLocaleDateString(), '</li>');
+      }
+      // 显示文件信息
+      document.getElementById('list').innerHTML = output.join('');
+    }
+
+    function dragOver(evt) {
+      evt.stopPropagation();
+      evt.preventDefault();
+      evt.dataTransfer.dropEffect = 'copy';
+    }
+
+    // 监听器
+    var dropZone = document.getElementById('drop_zone');
+    dropZone.addEventListener('dragover', dragOver, false);
+    dropZone.addEventListener('drop', fileSelect, false);
+        <body>
+
+        </body>
+        </head>
+</html>

@@ -1,0 +1,41 @@
+import re,requests,datetime,time
+from bs4 import BeautifulSoup
+from datetime import timedelta,date,datetime
+import calendar
+from random import randint
+
+today = date.today().strftime("%Y/%m/%d")
+
+# 8 月
+k = 0
+for i in range(1,32):
+    
+    arrive_day = date.today() + timedelta(days=1)
+    return_day = arrive_day + timedelta(days=1+k)
+    if i >= int(arrive_day.strftime("%d")) and i <= calendar.mdays[8]:
+        
+        
+        headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'}
+        payload = {'flight_search_parameter[0][departure_date]':'{}'.format(arrive_day.strftime("%Y/%m/%d")),
+        'flight_search_parameter[0][departure_airport_code]':'TPE',
+        'flight_search_parameter[0][arrival_airport_code]':'KIX',
+        'flight_search_parameter[0][is_return]':'true',
+        'flight_search_parameter[0][return_date]':'{}'.format(return_day.strftime("%Y/%m/%d")),
+        'adult_count':'1',
+        'child_count':'0',
+        'infant_count':'0',
+        'r':'static_search'}
+
+        url = 'https://booking.flypeach.com/tw'
+        
+        res = requests.post(url,headers=headers,data=payload)
+        res.encoding = 'utf8'
+        soup = BeautifulSoup(res.text,'lxml')
+        
+        fname = arrive_day.strftime("%m-%d") + "~" + return_day.strftime("%m-%d")
+        
+        f = open("C:\\Users\\Shiaulun\\Desktop\\Peach\\{}".format(fname),'w',encoding='utf8')
+        f.write(str(soup))
+        f.close()
+        time.sleep(randint(5,10))
+        k += 1
